@@ -1,5 +1,7 @@
 package com.dubiouscandle.candlelib.math;
 
+import java.util.Random;
+
 public class Mathf {
 	public static final float PI = (float) Math.PI;
 	public static final float TAU = 2f * PI;
@@ -20,10 +22,14 @@ public class Mathf {
 		}
 	}
 
-	public static float atanPos(float x) {
-		assert x >= 0;
+	/**
+	 * @param a
+	 * @return the arctangent of a, given that a >= 0
+	 */
+	public static float atanPos(float a) {
+		assert a >= 0;
 
-		float c = (x - 1) / (x + 1);
+		float c = (a - 1) / (a + 1);
 
 		float c2 = c * c;
 		float c3 = c * c2;
@@ -36,31 +42,87 @@ public class Mathf {
 				- 0.0117212f * c11;
 	}
 
+	/**
+	 * @param y
+	 * @param x
+	 * @return the angle theta in radians from the conversion of (x, y) into polar
+	 *         coordinates.
+	 */
 	public static float atan2(float y, float x) {
-		assert x != 0 || y != 0;
-
 		if (x == 0) {
+			if (y == 0) {
+				return 0;
+			}
 			return y > 0 ? HALF_PI : -HALF_PI;
-		} else if (x > 0) {
-			return y > 0 ? atanPos(y / x) : -atanPos(-y / x);
-		} else {
-			return y > 0 ? atanPos(y / x) + PI : atanPos(y / x) - PI;
 		}
+		if (x > 0) {
+			return y >= 0 ? atanPos(y / x) : -atanPos(-y / x);
+		}
+		if (x < 0) {
+			return y >= 0 ? PI - atanPos(y / -x) : -PI + atanPos(-y / -x);
+		}
+
+		return 0;
 	}
 
+	/**
+	 * returns sqrt(x)
+	 * 
+	 * @param x
+	 * @return sqrt(x)
+	 */
 	public static float sqrt(float x) {
 		return (float) Math.sqrt(x);
 	}
 
+	/**
+	 * returns 1/sqrt(x)
+	 * 
+	 * @param x
+	 * @return 1/sqrt(x)
+	 */
 	public static float rsqrt(float x) {
 		return 1.0f / (float) Math.sqrt(x);
 	}
 
+	/**
+	 * uses a lookup table to return the value of sin(x)
+	 * 
+	 * @param x
+	 * @return the cosine of x
+	 */
 	public static float sin(float x) {
 		return SIN_TABLE[(int) (x * SIN_VALUE_TO_INDEX) & SIN_MASK];
 	}
 
+	/**
+	 * uses a lookup table to return the value of cos(x)
+	 * 
+	 * @param x
+	 * @return the cosine of x
+	 */
 	public static float cos(float x) {
 		return SIN_TABLE[((int) (x * SIN_VALUE_TO_INDEX) + COS_SHIFT) & SIN_MASK];
+	}
+
+	public static void main(String[] args) {
+		Random random = new Random(31);
+		float e = 0;
+		for (int i = 0; i < 1_000_000; i++) {
+			float x = random.nextFloat(-100, 100);
+			float y = random.nextFloat(-100, 100);
+
+			float diff = (float) (Math.atan2(y, x) - atan2(y, x));
+			e += diff;
+			if (diff > 1E-5)
+				System.out.println(diff);
+		}
+		System.out.println(e);
+
+		System.out.println(atanPos(0));
+		for (int i = 0; i < 100; i++) {
+			float x = random.nextFloat(5);
+			System.out.println("(" + (x) + "," + atanPos(x) + "),");
+		}
 	}
 }

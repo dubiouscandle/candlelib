@@ -1,15 +1,22 @@
-package com.dubiouscandle.candlelib.datastructure;
+package com.dubiouscandle.candlelib.datastructure.object;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Random;
 
+/**
+ * fast open addressing implementation using double hashing. the behavior of
+ * null values is undefined.
+ * 
+ * @param <T>
+ */
 public class Set<T> implements Iterable<T> {
 	@SuppressWarnings("unchecked")
 	private T tombstone = (T) Boolean.FALSE;
 	private T[] values;
-	public int size;
 	private int tombstoneCount;
+	/**
+	 * the number of elements in this set. do not change this value!
+	 */
+	public int size;
 
 	@SuppressWarnings("unchecked")
 	public Set() {
@@ -191,48 +198,9 @@ public class Set<T> implements Iterable<T> {
 		return sb.toString();
 	}
 
-	public static void main(String[] args) {
-		Set<Integer> set1 = new Set<Integer>();
-		HashSet<Integer> set2 = new HashSet<Integer>();
-
-		Random random = new Random(0);
-
-		for (int i = 0; i < 100000000; i++) {
-			int in = random.nextInt(33412);
-
-			int c = random.nextInt(100);
-//			System.out.println(in);
-			if (in == 1) {
-				if (set1.add(c) != set2.add(c)) {
-					System.out.println("A");
-				}
-			} else if (in == 2) {
-				if (set1.remove(c) != set2.remove(c)) {
-//					System.out.println(set1);
-//					System.out.println(set2);
-					System.out.println("R");
-				}
-			} else {
-				if (set1.contains(c) != set2.contains(c)) {
-					System.out.println("C");
-				}
-			}
-		}
-
-		StringBuilder s1 = new StringBuilder();
-		for (Integer c : set1) {
-			s1.append(c);
-		}
-		StringBuilder s2 = new StringBuilder();
-		for (Integer c : set2) {
-			s2.append(c);
-		}
-		System.out.println(s1.substring(0, 10));
-		System.out.println(s2.substring(0, 10));
-		System.out.println(s1.length());
-		System.out.println(s2.length());
-	}
-
+	/**
+	 * returns a new iterator for this set
+	 */
 	@Override
 	public Iterator<T> iterator() {
 		return new Iterator<T>() {

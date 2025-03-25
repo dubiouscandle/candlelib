@@ -1,4 +1,4 @@
-package com.dubiouscandle.candlelib.datastructure;
+package com.dubiouscandle.candlelib.datastructure.primitive;
 
 /**
  * No checks are performed for bounds or null values in this class. It is the
@@ -7,27 +7,22 @@ package com.dubiouscandle.candlelib.datastructure;
  * out-of-bounds access or invalid operations will not result in runtime
  * exceptions (e.g., ArrayIndexOutOfBoundsException).
  */
-public class Array<T> {
-	public T[] items;
+public class FloatArray {
+	public float[] items;
 	public int size;
 
-	@SuppressWarnings("unchecked")
-	public Array() {
-		items = (T[]) new Object[16];
+	public FloatArray() {
+		items = new float[16];
 		size = 0;
 	}
 
 	/**
-	 * removes and returns the last element in this stack
+	 * removes and returns the last element in this array
 	 * 
-	 * @return the last element in this stack
+	 * @return the last element in this array
 	 */
-	public T poll() {
-		assert size > 0;
-
-		T poll = items[--size];
-		items[size] = null;
-		return poll;
+	public float poll() {
+		return items[--size];
 	}
 
 	/**
@@ -35,23 +30,22 @@ public class Array<T> {
 	 *
 	 * @param e the element to add
 	 */
-	@SuppressWarnings("unchecked")
-	public void add(T e) {
+	public void add(int value) {
 		if (size == items.length) {
-			Object[] resized = new Object[size * 2];
+			float[] resized = new float[size * 2];
 			System.arraycopy(items, 0, resized, 0, items.length);
 
-			items = (T[]) resized;
+			items = resized;
 		}
 
-		items[size++] = e;
+		items[size++] = value;
 	}
 
 	/**
 	 * @param index the index of the element to get
 	 * @return the element at the specified index
 	 */
-	public T get(int index) {
+	public float get(int index) {
 		return items[index];
 	}
 
@@ -62,9 +56,7 @@ public class Array<T> {
 	 * @param index the index of the element to remove
 	 */
 	public void remove(int index) {
-		size--;
-		items[index] = items[size];
-		items[size] = null;
+		items[index] = items[--size];
 	}
 
 	/**
@@ -77,13 +69,4 @@ public class Array<T> {
 		System.arraycopy(items, index + 1, items, index, items.length - index - 1);
 	}
 
-	/**
-	 * clears this array of all values
-	 */
-	public void clear() {
-		for (int i = 0; i < size; i++) {
-			items[i] = null;
-		}
-		size = 0;
-	}
 }

@@ -1,4 +1,4 @@
-package com.dubiouscandle.candlelib.datastructure;
+package com.dubiouscandle.candlelib.datastructure.object;
 
 import java.util.HashMap;
 import java.util.Objects;
