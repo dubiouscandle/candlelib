@@ -1,7 +1,5 @@
 package com.dubiouscandle.candlelib.math;
 
-import java.util.Random;
-
 public class Mathf {
 	public static final float PI = (float) Math.PI;
 	public static final float TAU = 2f * PI;
@@ -103,26 +101,5 @@ public class Mathf {
 	 */
 	public static float cos(float x) {
 		return SIN_TABLE[((int) (x * SIN_VALUE_TO_INDEX) + COS_SHIFT) & SIN_MASK];
-	}
-
-	public static void main(String[] args) {
-		Random random = new Random(31);
-		float e = 0;
-		for (int i = 0; i < 1_000_000; i++) {
-			float x = random.nextFloat(-100, 100);
-			float y = random.nextFloat(-100, 100);
-
-			float diff = (float) (Math.atan2(y, x) - atan2(y, x));
-			e += diff;
-			if (diff > 1E-5)
-				System.out.println(diff);
-		}
-		System.out.println(e);
-
-		System.out.println(atanPos(0));
-		for (int i = 0; i < 100; i++) {
-			float x = random.nextFloat(5);
-			System.out.println("(" + (x) + "," + atanPos(x) + "),");
-		}
 	}
 }
