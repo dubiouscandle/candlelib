@@ -3,16 +3,17 @@ package com.dubiouscandle.candlelib.datastructure.object;
 import java.util.Iterator;
 
 /**
- * fast open addressing implementation using double hashing. the behavior of
- * null values is undefined.
+ * open addressing implementation using double hashing. the behavior of null
+ * values is undefined.
  * 
- * @param <T>
+ * @param <T> the type of the elements in the set
  */
 public class Set<T> implements Iterable<T> {
 	@SuppressWarnings("unchecked")
 	private T tombstone = (T) Boolean.FALSE;
 	private T[] values;
 	private int tombstoneCount;
+	
 	/**
 	 * the number of elements in this set. do not change this value!
 	 */

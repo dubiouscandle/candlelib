@@ -37,7 +37,7 @@ public class Debug {
 		System.out.println("1: " + tAccum1 / 1_000_000_000.0);
 		System.out.println("2: " + tAccum2 / 1_000_000_000.0);
 	}
-		
+
 	public static void warm() {
 		for (int i = 0; i < 1_000_000_000; i++) {
 			Integer e = Integer.valueOf(i);

@@ -60,6 +60,13 @@ public class FloatArray {
 	}
 
 	/**
+	 * sets the size of this array to 0
+	 */
+	public void clear() {
+		size = 0;
+	}
+
+	/**
 	 * removes the element at the specified index by shifting all other elements
 	 * down
 	 *

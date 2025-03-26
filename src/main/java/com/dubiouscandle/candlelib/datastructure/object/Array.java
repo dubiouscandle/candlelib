@@ -1,5 +1,7 @@
 package com.dubiouscandle.candlelib.datastructure.object;
 
+import java.util.Iterator;
+
 /**
  * No checks are performed for bounds or null values in this class. It is the
  * responsibility of the user to ensure: - Array indices are within bounds (0 <=
@@ -7,7 +9,7 @@ package com.dubiouscandle.candlelib.datastructure.object;
  * out-of-bounds access or invalid operations will not result in runtime
  * exceptions (e.g., ArrayIndexOutOfBoundsException).
  */
-public class Array<T> {
+public class Array<T> implements Iterable<T> {
 	public T[] items;
 	public int size;
 
@@ -101,5 +103,28 @@ public class Array<T> {
 		}
 		sb.append(']');
 		return sb.toString();
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
+			private int i = 0;
+
+			@Override
+			public boolean hasNext() {
+				return i < size;
+			}
+
+			@Override
+			public T next() {
+				return items[i++];
+			}
+
+			@Override
+			public void remove() {
+				items[--i] = items[--size];
+				items[size] = null;
+			}
+		};
 	}
 }
