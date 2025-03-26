@@ -1,11 +1,5 @@
 package com.dubiouscandle.candlelib.datastructure.object;
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Random;
-
-import com.dubiouscandle.candlelib.debug.Debug;
-
 public class IntMap<T> {
 	@SuppressWarnings("unchecked")
 	private final T tombstone = (T) new Object();
@@ -260,51 +254,5 @@ public class IntMap<T> {
 			}
 		}
 		return sb.append(']').toString();
-	}
-	// 0.463160334
-	// 0.460959417
-	// 0.44856675
-
-	// 0.440042667
-	// 0.426665375
-	public static void main(String[] args) {
-		Debug.time(() -> {
-			Random random = new Random(0);
-			HashMap<Integer, Character> map1 = new HashMap<>();
-			IntMap<Character> map2 = new IntMap<>();
-			String chars = "asdfghjklqwertyuiopzxcvbnm qwertyuiopasdfghjklzxcvbnm meaning";
-			for (int i = 0; i < 10000000; i++) {
-				int ch = random.nextInt(5);
-				char character = chars.charAt(random.nextInt(0, chars.length()));
-				int index = random.nextInt(-100, 100);
-				Character out1 = null;
-				Character out2 = null;
-
-				if (ch == 111) {
-					out1 = map1.putIfAbsent(index, character);
-					out2 = map2.putIfAbsent(index, character);
-				} else if (ch == 111) {
-					if (map1.containsKey(index) != map2.containsKey(index)) {
-						System.out.println(index);
-					}
-				} else if (ch == 2) {
-					out1 = map1.put(index, character);
-					out2 = map2.put(index, character);
-				} else if (ch == 1) {
-					out1 = map1.get(index);
-					out2 = map2.get(index);
-				} else {
-					out1 = map1.remove(index);
-					out2 = map2.remove(index);
-				}
-				if (!Objects.equals(out1, out2)) {
-					System.out.println("ASDJNHAKJSLHDCKNJHANJKLSDCHASDASD");
-					System.out.println(out1);
-					System.out.println(out2);
-					System.out.println(map1);
-					System.out.println(map2);
-				}
-			}
-		});
 	}
 }
