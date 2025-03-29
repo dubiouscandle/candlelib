@@ -13,7 +13,7 @@ public class Set<T> implements Iterable<T> {
 	private T tombstone = (T) Boolean.FALSE;
 	private T[] values;
 	private int tombstoneCount;
-	
+
 	/**
 	 * the number of elements in this set. do not change this value!
 	 */
@@ -169,11 +169,16 @@ public class Set<T> implements Iterable<T> {
 	}
 
 	private int doubleHash(T e) {
-		return (e.hashCode() >>> 1 | 0b1);
+		int hash = e.hashCode();
+		return 1 | (hash % (values.length - 1));
 	}
 
 	@Override
 	public String toString() {
+		if (size == 0) {
+			return "[]";
+		}
+
 		StringBuilder sb = new StringBuilder();
 
 		sb.append('[');
@@ -183,9 +188,7 @@ public class Set<T> implements Iterable<T> {
 			i++;
 		}
 
-		sb.append(values[i]);
-
-		i++;
+		sb.append(values[i++]);
 
 		for (; i < values.length; i++) {
 			if (values[i] == null || values[i] == tombstone) {
@@ -227,6 +230,7 @@ public class Set<T> implements Iterable<T> {
 				values[i - 1] = tombstone;
 				size--;
 				count--;
+			    tombstoneCount++;
 			}
 		};
 	}

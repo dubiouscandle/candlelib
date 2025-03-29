@@ -9,44 +9,56 @@ import java.util.Iterator;
  * out-of-bounds access or invalid operations will not result in runtime
  * exceptions (e.g., ArrayIndexOutOfBoundsException).
  */
-public class Array<T> implements Iterable<T> {
+public class Vector<T> implements Iterable<T> {
+	/**
+	 * the items in this vector
+	 */
 	public T[] items;
+	/**
+	 * the size of this vector
+	 */
 	public int size;
 
 	@SuppressWarnings("unchecked")
-	public Array() {
+	public Vector() {
 		items = (T[]) new Object[16];
 		size = 0;
 	}
 
 	/**
-	 * removes and returns the last element in this array
+	 * removes and returns the last element in this vector
 	 * 
-	 * @return the last element in this array
+	 * @return the last element in this vector
 	 */
-	public T poll() {
+	public T pop() {
 		assert size > 0;
 
-		T poll = items[--size];
+		size--;
+		T poll = items[size];
 		items[size] = null;
 		return poll;
 	}
 
 	/**
-	 * adds the specified element to this array
+	 * adds the specified element to this vector
 	 *
 	 * @param e the element to add
 	 */
-	@SuppressWarnings("unchecked")
 	public void add(T e) {
 		if (size == items.length) {
-			Object[] resized = new Object[size * 2];
-			System.arraycopy(items, 0, resized, 0, items.length);
-
-			items = (T[]) resized;
+			resize(size << 1);
 		}
 
-		items[size++] = e;
+		items[size] = e;
+		size++;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void resize(int newSize) {
+		Object[] resized = new Object[newSize];
+		System.arraycopy(items, 0, resized, 0, items.length);
+
+		items = (T[]) resized;
 	}
 
 	/**
@@ -59,7 +71,7 @@ public class Array<T> implements Iterable<T> {
 
 	/**
 	 * removes the element at the specified index by overwriting it with the last
-	 * element in the array
+	 * element in the vector
 	 *
 	 * @param index the index of the element to remove
 	 */
@@ -80,7 +92,7 @@ public class Array<T> implements Iterable<T> {
 	}
 
 	/**
-	 * clears this array of all values
+	 * clears this vector of all values
 	 */
 	public void clear() {
 		for (int i = 0; i < size; i++) {

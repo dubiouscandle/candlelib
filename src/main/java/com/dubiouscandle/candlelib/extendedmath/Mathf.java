@@ -1,4 +1,4 @@
-package com.dubiouscandle.candlelib.math;
+package com.dubiouscandle.candlelib.extendedmath;
 
 public class Mathf {
 	public static final float PI = (float) Math.PI;
