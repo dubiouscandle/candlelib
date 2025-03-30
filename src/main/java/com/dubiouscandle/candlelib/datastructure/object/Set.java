@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 /**
  * open addressing implementation using double hashing. the behavior of null
- * values is undefined.
+ * values is undefined. this class is not designed for especially fast iteration.
  * 
  * @param <T> the type of the elements in the set
  */

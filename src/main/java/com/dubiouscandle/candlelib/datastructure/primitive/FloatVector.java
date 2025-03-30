@@ -7,26 +7,26 @@ package com.dubiouscandle.candlelib.datastructure.primitive;
  * out-of-bounds access or invalid operations will not result in runtime
  * exceptions (e.g., ArrayIndexOutOfBoundsException).
  */
-public class FloatArray {
+public class FloatVector {
 	public float[] items;
 	public int size;
 
-	public FloatArray() {
+	public FloatVector() {
 		items = new float[16];
 		size = 0;
 	}
 
 	/**
-	 * removes and returns the last element in this array
+	 * removes and returns the last element in this vector
 	 * 
-	 * @return the last element in this array
+	 * @return the last element in this vector
 	 */
 	public float poll() {
 		return items[--size];
 	}
 
 	/**
-	 * adds the specified element to this array
+	 * adds the specified element to this vector
 	 *
 	 * @param e the element to add
 	 */
@@ -51,7 +51,7 @@ public class FloatArray {
 
 	/**
 	 * removes the element at the specified index by overwriting it with the last
-	 * element in the array
+	 * element in the vector
 	 *
 	 * @param index the index of the element to remove
 	 */
@@ -60,7 +60,7 @@ public class FloatArray {
 	}
 
 	/**
-	 * sets the size of this array to 0
+	 * sets the size of this vector to 0
 	 */
 	public void clear() {
 		size = 0;
@@ -76,4 +76,19 @@ public class FloatArray {
 		System.arraycopy(items, index + 1, items, index, items.length - index - 1);
 	}
 
+	@Override
+	public String toString() {
+		if (size == 0) {
+			return "[]";
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		sb.append(items[0]);
+		for (int i = 1; i < size; i++) {
+			sb.append(',').append(' ').append(items[i]);
+		}
+		sb.append(']');
+		return sb.toString();
+	}
 }

@@ -1,5 +1,12 @@
 package com.dubiouscandle.candlelib.datastructure.object;
 
+/**
+ * open addressing implentation of a map. the behaviour of null keys and null
+ * values is undefined.
+ * 
+ * @param <K>
+ * @param <V>
+ */
 public class Map<K, V> {
 	@SuppressWarnings("unchecked")
 	private final V tombstone = (V) new Object();

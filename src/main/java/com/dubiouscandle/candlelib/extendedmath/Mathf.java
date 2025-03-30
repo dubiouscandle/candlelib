@@ -48,10 +48,7 @@ public class Mathf {
 	 */
 	public static float atan2(float y, float x) {
 		if (x == 0) {
-			if (y == 0) {
-				return 0;
-			}
-			return y > 0 ? HALF_PI : -HALF_PI;
+			return y == 0 ? 0 : (y > 0 ? HALF_PI : -HALF_PI);
 		}
 		if (x > 0) {
 			return y >= 0 ? atanPos(y / x) : -atanPos(-y / x);
