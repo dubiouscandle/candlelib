@@ -1,7 +1,5 @@
 package com.dubiouscandle.candlelib.datastructures;
 
-import java.util.Iterator;
-
 /**
  * No checks are performed for bounds or null values in this class. It is the
  * responsibility of the user to ensure: - Array indices are within bounds (0 <=
@@ -9,34 +7,19 @@ import java.util.Iterator;
  * out-of-bounds access or invalid operations will not result in runtime
  * exceptions (e.g., ArrayIndexOutOfBoundsException).
  */
-public class Vector<T> implements Iterable<T> {
+public class IntVector {
 	/**
 	 * the items in this vector
 	 */
-	public T[] items;
+	public int[] items;
 	/**
 	 * the size of this vector
 	 */
 	public int size;
 
-	@SuppressWarnings("unchecked")
-	public Vector() {
-		items = (T[]) new Object[16];
+	public IntVector() {
+		items = new int[16];
 		size = 0;
-	}
-
-	/**
-	 * removes and returns the last element in this vector
-	 * 
-	 * @return the last element in this vector
-	 */
-	public T pop() {
-		assert size > 0;
-
-		size--;
-		T poll = items[size];
-		items[size] = null;
-		return poll;
 	}
 
 	/**
@@ -44,28 +27,27 @@ public class Vector<T> implements Iterable<T> {
 	 *
 	 * @param e the element to add
 	 */
-	public void add(T e) {
+	public void add(int value) {
 		if (size == items.length) {
 			resize(size << 1);
 		}
 
-		items[size] = e;
+		items[size] = value;
 		size++;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void resize(int newSize) {
-		Object[] resized = new Object[newSize];
+		int[] resized = new int[newSize];
 		System.arraycopy(items, 0, resized, 0, items.length);
 
-		items = (T[]) resized;
+		items = resized;
 	}
 
 	/**
 	 * @param index the index of the element to get
 	 * @return the element at the specified index
 	 */
-	public T get(int index) {
+	public int get(int index) {
 		return items[index];
 	}
 
@@ -78,7 +60,6 @@ public class Vector<T> implements Iterable<T> {
 	public void removeUnordered(int index) {
 		size--;
 		items[index] = items[size];
-		items[size] = null;
 	}
 
 	/**
@@ -90,16 +71,12 @@ public class Vector<T> implements Iterable<T> {
 	public void remove(int index) {
 		size--;
 		System.arraycopy(items, index + 1, items, index, size - index);
-		items[size] = null;
 	}
 
 	/**
-	 * clears this vector of all values
+	 * sets the size of this vector to zero
 	 */
 	public void clear() {
-		for (int i = 0; i < size; i++) {
-			items[i] = null;
-		}
 		size = 0;
 	}
 
@@ -117,28 +94,5 @@ public class Vector<T> implements Iterable<T> {
 		}
 		sb.append(']');
 		return sb.toString();
-	}
-
-	@Override
-	public Iterator<T> iterator() {
-		return new Iterator<T>() {
-			private int i = 0;
-
-			@Override
-			public boolean hasNext() {
-				return i < size;
-			}
-
-			@Override
-			public T next() {
-				return items[i++];
-			}
-
-			@Override
-			public void remove() {
-				items[--i] = items[--size];
-				items[size] = null;
-			}
-		};
 	}
 }
