@@ -1,5 +1,15 @@
-package com.dubiouscandle.candlelib.datastructure.object;
+package com.dubiouscandle.candlelib.datastructures;
 
+/**
+ * A deque implementation using an array. No checks are performed for bounds or
+ * null values in this class. It is the responsibility of the user to ensure: -
+ * Array indices are within bounds (0 <= index < size). - Null values are
+ * handled appropriately if necessary. Any out-of-bounds access or invalid
+ * operations will not result in runtime exceptions (e.g.,
+ * ArrayIndexOutOfBoundsException).
+ * 
+ * @param <T>
+ */
 public class Deque<T> {
 	public T[] buffer;
 	/**
@@ -18,10 +28,18 @@ public class Deque<T> {
 		tail = 0;
 	}
 
+	/**
+	 * @return the element at the head of this deque
+	 */
 	public T peek() {
 		return buffer[head];
 	}
 
+	/**
+	 * removes and returns the element at the head of this deque
+	 * 
+	 * @return the element that was at the head of this deque
+	 */
 	public T poll() {
 		final T poll = buffer[head];
 		buffer[head] = null;
@@ -29,6 +47,11 @@ public class Deque<T> {
 		return poll;
 	}
 
+	/**
+	 * pushes the specified element to the head of this deque
+	 * 
+	 * @param e
+	 */
 	public void push(final T e) {
 		if (head == tail + 1) {
 			resize();
@@ -55,10 +78,18 @@ public class Deque<T> {
 		buffer = resized;
 	}
 
+	/**
+	 * @return the number of elements in this deque
+	 */
 	public int size() {
 		return (tail - head) & (buffer.length - 1);
 	}
 
+	/**
+	 * appends the specified element to the tail of this deque
+	 * 
+	 * @param e
+	 */
 	public void append(final T e) {
 		if (head == tail + 1) {
 			resize();
@@ -86,6 +117,10 @@ public class Deque<T> {
 		return sb.toString();
 	}
 
+	/**
+	 * @param index
+	 * @return the element at the specified index
+	 */
 	public T get(int index) {
 		return buffer[(head + index) & (buffer.length - 1)];
 	}

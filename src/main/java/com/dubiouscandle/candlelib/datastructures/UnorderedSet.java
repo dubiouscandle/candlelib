@@ -1,18 +1,27 @@
-package com.dubiouscandle.candlelib.datastructure.object;
+package com.dubiouscandle.candlelib.datastructures;
 
 import java.util.Iterator;
 
 /**
  * open addressing implementation using double hashing. the behavior of null
- * values is undefined. this class is not designed for especially fast iteration.
+ * values is undefined. this class is not designed for especially fast
+ * iteration.
  * 
  * @param <T> the type of the elements in the set
  */
-public class Set<T> implements Iterable<T> {
+public class UnorderedSet<T> implements Iterable<T> {
+	/**
+	 * the tombstone marker for this set for convienient iteration
+	 */
+	public static final Object TOMBSTONE = new Object();
+
 	@SuppressWarnings("unchecked")
-	private T tombstone = (T) Boolean.FALSE;
-	private T[] values;
-	private int tombstoneCount;
+	private T tombstone = (T) TOMBSTONE;
+
+	/*
+	 * The values of this set for convienient iteration
+	 */
+	public T[] values;
 
 	/**
 	 * the number of elements in this set. do not change this value!
@@ -20,7 +29,7 @@ public class Set<T> implements Iterable<T> {
 	public int size;
 
 	@SuppressWarnings("unchecked")
-	public Set() {
+	public UnorderedSet() {
 		values = (T[]) new Object[16];
 		size = 0;
 	}
@@ -34,89 +43,57 @@ public class Set<T> implements Iterable<T> {
 	 */
 	public boolean add(T e) {
 		int mask = values.length - 1;
-		int i = e.hashCode() & mask;
-		int d = doubleHash(e);
+		int i = e.hashCode();
+		int d = doubleHash(i);
+		i &= mask;
+		int end = i;
 
-		while (values[i] != null) {
-			if (e.equals(values[i])) {
-				return false;
-			}
-			i = (i + d) & mask;
+		int firstTombstone = -1;
+
+		if (values[i] != null) {
+			do {
+				if (e.equals(values[i])) {
+					return false;
+				} else if (firstTombstone == -1 && values[i] == tombstone) {
+					firstTombstone = i;
+				}
+
+				i = (i + d) & mask;
+			} while (values[i] != null && i != end);
 		}
 
-		if (values[i] == tombstone) {
-			tombstoneCount--;
+		if (firstTombstone != -1) {
+			i = firstTombstone;
 		}
 
-		size++;
 		values[i] = e;
-
-		if (size << 1 >= values.length) {
+		size++;
+		if (size << 1 > values.length) {
 			resize(values.length << 1);
 		}
-
 		return true;
 	}
 
 	@SuppressWarnings("unchecked")
 	private void resize(int newSize) {
-		tombstoneCount = 0;
-
 		T[] oldValues = values;
 		values = (T[]) new Object[newSize];
 		int mask = values.length - 1;
 
-		int count = 0;
-		for (int i = 0; count < size; i++) {
-			if (oldValues[i] == null || oldValues[i] == tombstone) {
+		for (T e : oldValues) {
+			if (e == null || e == tombstone) {
 				continue;
 			}
 
-			T e = oldValues[i];
-
-			int j = e.hashCode() & mask;
-			int d = doubleHash(e);
+			int j = e.hashCode();
+			int d = doubleHash(j);
+			j &= mask;
 
 			while (values[j] != null) {
 				j = (j + d) & mask;
 			}
 
 			values[j] = e;
-
-			count++;
-		}
-	}
-
-	/**
-	 * rehashes all values
-	 */
-	@SuppressWarnings("unchecked")
-	public void rehash() {
-		tombstoneCount = 0;
-
-		T[] oldValues = values;
-		values = (T[]) new Object[values.length];
-
-		int mask = values.length - 1;
-
-		int count = 0;
-		for (int i = 0; count < size; i++) {
-			if (oldValues[i] == null || oldValues[i] == tombstone) {
-				continue;
-			}
-
-			T e = oldValues[i];
-
-			int j = e.hashCode() & mask;
-			int d = doubleHash(e);
-
-			while (values[j] != null) {
-				j = (j + d) & mask;
-			}
-
-			values[j] = e;
-
-			count++;
 		}
 	}
 
@@ -128,24 +105,34 @@ public class Set<T> implements Iterable<T> {
 	 */
 	public boolean remove(T e) {
 		int mask = values.length - 1;
-		int i = e.hashCode() & mask;
-		int d = doubleHash(e);
+		int i = e.hashCode();
+		int d = doubleHash(i);
+		i &= mask;
 
-		while (values[i] != null) {
-			if (e.equals(values[i])) {
-				values[i] = tombstone;
-				size--;
-				tombstoneCount++;
-
-				if (tombstoneCount << 2 >= values.length) {
-					rehash();
-				}
-				return true;
-			}
-			i = (i + d) & mask;
+		if (values[i] == null) {
+			return false;
 		}
 
+		int end = i;
+
+		do {
+			if (values[i] != tombstone && e.equals(values[i])) {
+				size--;
+				values[i] = tombstone;
+				return true;
+			}
+
+			i = (i + d) & mask;
+		} while (values[i] != null && i != end);
+
 		return false;
+	}
+
+	/**
+	 * rehashes all values
+	 */
+	public void rehash() {
+		resize(values.length);
 	}
 
 	/**
@@ -155,22 +142,34 @@ public class Set<T> implements Iterable<T> {
 	 */
 	public boolean contains(T e) {
 		int mask = values.length - 1;
-		int i = e.hashCode() & mask;
-		int d = doubleHash(e);
+		int i = e.hashCode();
+		int d = doubleHash(i);
+		i &= mask;
 
-		while (values[i] != null) {
+		if (values[i] == null) {
+			return false;
+		}
+
+		int end = i;
+
+		do {
 			if (e.equals(values[i])) {
 				return true;
 			}
 			i = (i + d) & mask;
-		}
+		} while (values[i] != null && i != end);
 
 		return false;
 	}
 
-	private int doubleHash(T e) {
-		int hash = e.hashCode();
-		return 1 | (hash % (values.length - 1));
+	protected int doubleHash(int x) {
+		x = (x + 0x7ed55d16) + (x << 12);
+		x = (x ^ 0xc761c23c) ^ (x >> 19);
+		x = (x + 0x165667b1) + (x << 5);
+		x = (x + 0xd3a2646c) ^ (x << 9);
+		x = (x + 0xfd7046c5) + (x << 3);
+		x = (x ^ 0xb55a4f09) ^ (x >> 16);
+		return (x & 1) == 1 ? x : (x << 1 | 1);
 	}
 
 	@Override
@@ -230,7 +229,6 @@ public class Set<T> implements Iterable<T> {
 				values[i - 1] = tombstone;
 				size--;
 				count--;
-			    tombstoneCount++;
 			}
 		};
 	}

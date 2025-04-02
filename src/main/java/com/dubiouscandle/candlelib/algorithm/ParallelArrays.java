@@ -1,10 +1,20 @@
-package com.dubiouscandle.candlelib.datastructure.algorithm;
+package com.dubiouscandle.candlelib.algorithm;
 
 import java.util.Random;
 
 public class ParallelArrays {
 	private static final Random RANDOM = new Random();
 
+	/**
+	 * sorts both the items array and values array in ascending order according to
+	 * the values array from indices min to max (both inclusive)
+	 * 
+	 * @param <T>
+	 * @param items
+	 * @param values
+	 * @param min    the minimum index (inclusive)
+	 * @param max    the maximum index (inclusive)
+	 */
 	public static <T> void quicksort(T[] items, int[] values, int min, int max) {
 		if (max - min <= 16) {
 			insertionSort(items, values, min, max);

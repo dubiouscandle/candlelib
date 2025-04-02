@@ -1,4 +1,6 @@
-package com.dubiouscandle.candlelib.datastructure.primitive;
+package com.dubiouscandle.candlelib.datastructures;
+
+import java.util.Iterator;
 
 /**
  * No checks are performed for bounds or null values in this class. It is the
@@ -7,12 +9,19 @@ package com.dubiouscandle.candlelib.datastructure.primitive;
  * out-of-bounds access or invalid operations will not result in runtime
  * exceptions (e.g., ArrayIndexOutOfBoundsException).
  */
-public class IntVector {
-	public int[] items;
+public class Vector<T> implements Iterable<T> {
+	/**
+	 * the items in this vector
+	 */
+	public T[] items;
+	/**
+	 * the size of this vector
+	 */
 	public int size;
 
-	public IntVector() {
-		items = new int[16];
+	@SuppressWarnings("unchecked")
+	public Vector() {
+		items = (T[]) new Object[16];
 		size = 0;
 	}
 
@@ -21,8 +30,13 @@ public class IntVector {
 	 * 
 	 * @return the last element in this vector
 	 */
-	public int poll() {
-		return items[--size];
+	public T pop() {
+		assert size > 0;
+
+		size--;
+		T poll = items[size];
+		items[size] = null;
+		return poll;
 	}
 
 	/**
@@ -30,40 +44,41 @@ public class IntVector {
 	 *
 	 * @param e the element to add
 	 */
-	public void add(int value) {
+	public void add(T e) {
 		if (size == items.length) {
-			int[] resized = new int[size * 2];
-			System.arraycopy(items, 0, resized, 0, items.length);
-
-			items = resized;
+			resize(size << 1);
 		}
 
-		items[size++] = value;
+		items[size] = e;
+		size++;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void resize(int newSize) {
+		Object[] resized = new Object[newSize];
+		System.arraycopy(items, 0, resized, 0, items.length);
+
+		items = (T[]) resized;
 	}
 
 	/**
 	 * @param index the index of the element to get
 	 * @return the element at the specified index
 	 */
-	public int get(int index) {
+	public T get(int index) {
 		return items[index];
 	}
 
 	/**
 	 * removes the element at the specified index by overwriting it with the last
-	 * element in the array
+	 * element in the vector
 	 *
 	 * @param index the index of the element to remove
 	 */
-	public void remove(int index) {
-		items[index] = items[--size];
-	}
-
-	/**
-	 * sets the size of this array to 0
-	 */
-	public void clear() {
-		size = 0;
+	public void removeOrdered(int index) {
+		size--;
+		items[index] = items[size];
+		items[size] = null;
 	}
 
 	/**
@@ -72,8 +87,18 @@ public class IntVector {
 	 *
 	 * @param index the index of the element to remove
 	 */
-	public void removeOrdered(int index) {
+	public void remove(int index) {
 		System.arraycopy(items, index + 1, items, index, items.length - index - 1);
+	}
+
+	/**
+	 * clears this vector of all values
+	 */
+	public void clear() {
+		for (int i = 0; i < size; i++) {
+			items[i] = null;
+		}
+		size = 0;
 	}
 
 	@Override
@@ -92,4 +117,26 @@ public class IntVector {
 		return sb.toString();
 	}
 
+	@Override
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
+			private int i = 0;
+
+			@Override
+			public boolean hasNext() {
+				return i < size;
+			}
+
+			@Override
+			public T next() {
+				return items[i++];
+			}
+
+			@Override
+			public void remove() {
+				items[--i] = items[--size];
+				items[size] = null;
+			}
+		};
+	}
 }

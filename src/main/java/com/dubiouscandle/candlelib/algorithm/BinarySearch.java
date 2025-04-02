@@ -1,8 +1,8 @@
-package com.dubiouscandle.candlelib.datastructure.algorithm;
+package com.dubiouscandle.candlelib.algorithm;
 
 import java.util.Comparator;
 
-public class BinSearch {
+public class BinarySearch {
 	/**
 	 * searches the indices from min (inclusive) to max (inclusive) for the greatest
 	 * element less than or equal to key. if the list is not sorted, the behavior of
